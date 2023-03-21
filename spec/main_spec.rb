@@ -47,4 +47,20 @@ describe "database" do
       "db > ",
     ])
   end
+
+  it "Prints error if strings are to long" do
+    long_username = "a"*33
+    long_email = "a"*256
+
+    result = run_script([
+      "insert 1 #{long_username} #{long_email}",
+      "select",
+      ".exit",
+    ])
+    expect(result).to match_array([
+      "db > String is too long.",
+      "db > Executed.",
+      "db > ",
+    ])
+  end
 end
