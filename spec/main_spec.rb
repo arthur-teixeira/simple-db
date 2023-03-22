@@ -63,4 +63,17 @@ describe "database" do
       "db > ",
     ])
   end
+
+  it "Printes an error if id is negative" do
+    result = run_script([
+      "insert -1 a b",
+      "select",
+      ".exit",
+    ])
+    expect(result).to match_array([
+      "db > ID must be positive.",
+      "db > Executed.",
+      "db > ",
+    ])
+  end
 end
