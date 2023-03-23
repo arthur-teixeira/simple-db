@@ -68,7 +68,7 @@ describe "database" do
     ])
   end
 
-  it "Printes an error if id is negative" do
+  it "Prints an error if id is negative" do
     result = run_script([
       "insert -1 a b",
       "select",
@@ -121,5 +121,27 @@ describe "database" do
       "LEAF_NODE_MAX_CELLS: 13",
       "db > ",
     ])
+  end
+
+  it "allows printing out the structure of a one-node btree" do
+    script = [3, 1, 2].map do |i|
+      "insert #{i} user#{i} person#{i}@example.com"
+    end
+    script << ".btree"
+    script << ".exit"
+    result = run_script(script)
+
+    expect(result).to match_array([
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Tree:",
+      "leaf (size 3)",
+      "  - 0 : 3",
+      "  - 1 : 1",
+      "  - 2 : 2",
+      "db > "
+    ])
+
   end
 end
