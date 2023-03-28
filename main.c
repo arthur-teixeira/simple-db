@@ -282,6 +282,12 @@ void create_new_root(Table *table, uint32_t right_child_page_num) {
   *internal_node_right_child(root) = right_child_page_num;
 }
 
+void serialize_row(Row *source, void *destination) {
+  memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
+  strncpy(destination + USERNAME_OFFSET, source->username, USERNAME_SIZE);
+  strncpy(destination + EMAIL_OFFSET, source->email, EMAIL_SIZE);
+}
+
 void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
   void *old_node = get_page(cursor->table->pager, cursor->page_num);
   uint32_t new_page_num = get_unused_page_num(cursor->table->pager);
@@ -300,7 +306,8 @@ void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
     void *destination = leaf_node_cell(dest_node, index_within_node);
 
     if (i == cursor->cell_num) {
-      memcpy(destination, leaf_node_cell(old_node, i - 1), LEAF_NODE_CELL_SIZE);
+      serialize_row(value, leaf_node_value(dest_node, index_within_node));
+      *leaf_node_key(dest_node, index_within_node) = key;
     } else {
       memcpy(destination, leaf_node_cell(old_node, i), LEAF_NODE_CELL_SIZE);
     }
@@ -318,11 +325,6 @@ void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
   }
 }
 
-void serialize_row(Row *source, void *destination) {
-  memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
-  strncpy(destination + USERNAME_OFFSET, source->username, USERNAME_SIZE);
-  strncpy(destination + EMAIL_OFFSET, source->email, EMAIL_SIZE);
-}
 
 void deserialize_row(void *source, Row *destination) {
   memcpy(&(destination->id), source + ID_OFFSET, ID_SIZE);

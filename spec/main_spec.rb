@@ -201,7 +201,7 @@ describe "database" do
       "    - 11",
       "    - 12",
       "    - 13",
-      "    - 13",
+      "    - 14",
       "db > Executed.",
       "db > ",
     ])
