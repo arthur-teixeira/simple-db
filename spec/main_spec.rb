@@ -5,7 +5,6 @@ describe "database" do
 
   def run_script(commands)
     raw_output = nil
-    puts commands
     IO.popen("./db test.db", "r+") do |pipe|
       commands.each do |command| 
         begin
@@ -42,7 +41,7 @@ describe "database" do
     result = run_script(script)
     expect(result.last(2)).to match_array([
       "db > Executed.",
-      "db > Need to implement updating parent after split.",
+      "db > Need to implement splitting internal node",
     ])
   end
 
@@ -193,7 +192,7 @@ describe "database" do
       "    - 5",
       "    - 6",
       "    - 7",
-      "  - key 8",
+      "  - key 7",
       "  - leaf (size 7)",
       "    - 8",
       "    - 9",
